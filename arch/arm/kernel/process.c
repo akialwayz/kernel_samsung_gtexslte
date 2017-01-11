@@ -179,6 +179,9 @@ static void default_idle(void)
 	local_irq_enable();
 }
 
+void (*pm_idle)(void) = default_idle;		
+EXPORT_SYMBOL(pm_idle);
+
 void arch_cpu_idle_prepare(void)
 {
 	local_fiq_enable();
@@ -236,6 +239,16 @@ __setup("reboot=", reboot_setup);
  */
 void machine_shutdown(void)
 {
+#ifdef CONFIG_SMP
+	/*
+	 * Disable preemption so we're guaranteed to
+	 * run to power off or reboot and prevent
+	 * the possibility of switching to another
+	 * thread that might wind up blocking on
+	 * one of the stopped CPUs.
+	 */
+	preempt_disable();
+#endif
 	disable_nonboot_cpus();
 }
 
