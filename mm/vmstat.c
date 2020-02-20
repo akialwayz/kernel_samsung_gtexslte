@@ -19,6 +19,9 @@
 #include <linux/math64.h>
 #include <linux/writeback.h>
 #include <linux/compaction.h>
+#include <linux/mm_inline.h>
+
+#include "internal.h"
 
 #ifdef CONFIG_VM_EVENT_COUNTERS
 DEFINE_PER_CPU(struct vm_event_state, vm_event_states) = {{0}};
@@ -618,6 +621,29 @@ int fragmentation_index(struct zone *zone, unsigned int order)
 }
 #endif
 
+#ifdef CONFIG_POMEMR_RECLAIM
+int get_buddyinfo_higherorder(long reclaim_size[MAX_ORDER_RECLAIM])
+{
+	unsigned int order;
+	struct zone *zone;
+    int ret = 0;
+	for_each_populated_zone(zone) {
+		if(zone->name[0] == 'H') {
+			for (order = MIN_ORDER_RECLAIM; order < MAX_ORDER_RECLAIM; order++) {
+				pr_debug(" kpomemr %6lu ", zone->free_area[order].nr_free);
+				reclaim_size[order] -=  zone->free_area[order].nr_free;
+                if (reclaim_size[order] > 0)
+                    ret = 1;
+			}
+		pr_debug("\n");
+		}
+	}
+	return ret;
+}
+
+EXPORT_SYMBOL(get_buddyinfo_higherorder);
+#endif /* CONFIG_POMEMR_RECLAIM */
+
 #if defined(CONFIG_PROC_FS) || defined(CONFIG_COMPACTION)
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
@@ -779,7 +805,6 @@ const char * const vmstat_text[] = {
 
 #ifdef CONFIG_NUMA_BALANCING
 	"numa_pte_updates",
-	"numa_huge_pte_updates",
 	"numa_hint_faults",
 	"numa_hint_faults_local",
 	"numa_pages_migrated",
@@ -1053,7 +1078,7 @@ static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
 		   "\n  all_unreclaimable: %u"
 		   "\n  start_pfn:         %lu"
 		   "\n  inactive_ratio:    %u",
-		   zone->all_unreclaimable,
+		   !zone_reclaimable(zone),
 		   zone->zone_start_pfn,
 		   zone->inactive_ratio);
 	seq_putc(m, '\n');
