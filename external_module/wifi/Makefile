@@ -37,6 +37,8 @@ ifeq ($(KDIR),)
 $(error No KDIR found for platform $(CPU))
 endif
 
+CLEAN_FILES := Module.symvers .tmp_versions/sprdwl.mod
+
 all:
 	$(MAKE) ARCH=$(ARCH) -C $(KDIR) M=$(CURDIR)
 
@@ -45,5 +47,6 @@ kernelrelease:
 
 clean:
 	$(MAKE) ARCH=$(ARCH) -C $(KDIR) M=$(CURDIR) clean
+	$(hide) @rm -v $(CLEAN_FILES) 2> /dev/null || echo "INFO: one or more of the following temp files are not existing: $(CLEAN_FILES)"
 
 endif
