@@ -19,7 +19,7 @@ DTS_FILES=".sprd-scx35l_sharkls_gtexslte_rev00.dtb.dts .sprd-scx35l_sharkls_gtex
 [ ! -z "$KERNEL_PATH" ] && cd $KERNEL_PATH
 KERNEL_PATH=$(pwd)
 
-MODULE_PATH=../../../out/target/product/gtexslte/root/lib/modules
+MODULE_PATH=../../../out/target/product/gtexslte/system/lib/modules
 REC_MODULE_PATH=../../../out/target/product/gtexslte/recovery/root/lib/modules
 EXTERNAL_MODULE_PATH=${KERNEL_PATH}/external_module
 
