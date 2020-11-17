@@ -558,10 +558,8 @@ CONFIG_CMDLINE_FROM_BOOTLOADER=y
 # IF you want to PREPEND the bootloader cmdline
 # also just set CONFIG_CMDLINE_EXTEND=y
 # and configure CONFIG_CMDLINE="your cmdline".
-# hint: unfortunately androidboot.selinux=0 has no effect here as
-# it get ignored/overwritten even when it will be in the cmdline
-# CONFIG_CMDLINE_EXTEND is not set
-# CONFIG_CMDLINE is not set
+CONFIG_CMDLINE_EXTEND=y
+CONFIG_CMDLINE="androidboot.selinux=permissive"
 
 # CONFIG_CMDLINE_FORCE is not set
 # CONFIG_XIP_KERNEL is not set
